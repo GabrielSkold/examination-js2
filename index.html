@@ -3,11 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tamagotchi-spel</title>
     <link rel="stylesheet" href="style.css">
     <script src="index.js" defer></script>
 </head>
 <body>
-    
+
+    <h1>Tamagothchi the desktop game</h1>
+
+    <!-- Form för att skapa Tamagotchi -->
+    <form id="create-pet">
+        <input type="text" id="tama-name" placeholder="Pick your own name...">
+
+        <select id="pet-type">
+            <option value="tama1">Tama alien 1</option>
+            <option value="tama2">Tama alien 2</option>
+            <option value="tama3">Tama alien 3</option>
+            <option value="tama3">Tama alien 4</option>
+        </select>
+    </form>
+
+    <label>
+        <input type="checkbox" id="random-name">
+        Name randomizer
+    </label>
+
+    <button type="submit">Create Tamagotchi</button>
+
+    <!-- Container för att lagra Tamagotchis -->
+    <div id="tama-container"></div>
+    <h2>Activity history</h2>
+    <div id="history"></div>
 </body>
 </html>
