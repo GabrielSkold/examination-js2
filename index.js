@@ -1,8 +1,8 @@
-const url = ("https://randomuser.me/api");
 const nameInput = document.querySelector("#tama-name");
 const typeSelect = document.querySelector("#pet-type");
 const petsContainer = document.querySelector("#pets-container");
 const historyLog = document.querySelector("#history");
+const checkboxInput = document.querySelector("#random-name");
 
 // Skapar klass för Tamagotchi objekt
 class Pet {
@@ -91,7 +91,7 @@ function renderPet(pet) {
 }
 
 const createBtn = document.querySelector("#create-pet");
-createBtn.addEventListener("click", () => {
+createBtn.addEventListener("click", async () => {
     const maxPets = 4;
 
     if(petsContainer.children.length >= maxPets) {
@@ -99,8 +99,15 @@ createBtn.addEventListener("click", () => {
         return;
     }
 
-    const name = nameInput.value;
     const petType = typeSelect.value;
+
+    let name = nameInput.value.trim();
+
+  // Om checkbox är ikryssad ELLER input är tom -> hämta från API
+  if (checkboxInput.checked || !name) {
+    const fetched = await nameFetch();
+    if (fetched) name = fetched;
+  }
 
     const pet = new Pet(name, petType);
     const petCard = renderPet(pet);
@@ -108,31 +115,28 @@ createBtn.addEventListener("click", () => {
     petsContainer.append(petCard);
 })
 
-async function fetchName() {
-    try {
-        const response = await fetch("https://randomuser.me/api")
-        console.log(url);
+async function nameFetch() {
+  try {
+    const res = await fetch("https://randomuser.me/api/0.8");
 
-        if(!response.ok){
-            throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
+    console.log("Status:", res.status, res.statusText);
 
-        const randomName = data?.results?.[0]?.name?.first;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        if(!randomName) {
-            throw new Error("Kunde inte läsa namn från API-svaret.")
-        }
-        return randomName;
-    } catch (error) {
-        //Loggar för mig själv
-        console.error("fetchName failed:", error);
+    const data = await res.json();
+    console.log("API data:", data);
 
-        //Returnerar null
-        return null;
-    }
+    const first = data.results[0].user.name.first;
+
+    if (!first) throw new Error("Could not find results[0].name.first in response");
+
+    return first;
+  } catch (err) {
+    console.error("fetchRandomName failed:", err);
+    return null;
+  }
 }
+(async () => console.log("Random name:", await nameFetch()))();
 
 //Logg för aktivitetshistorik
 function addLog(message) {
